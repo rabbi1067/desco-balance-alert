@@ -78,6 +78,10 @@ try:
 
     if balance <= THRESHOLD:
 
+        print(
+            "Low balance detected. Sending email..."
+        )
+
         sender_email = os.environ["EMAIL_USER"]
 
         sender_password = os.environ["EMAIL_PASS"]
@@ -88,7 +92,9 @@ try:
         )
 
         body = f"""
-DESCO PREPAID BALANCE ALERT
+Hello,
+
+This is an automatic DESCO prepaid balance notification.
 
 Account No : {ACCOUNT_NO}
 
@@ -98,13 +104,14 @@ Current Balance : {balance} BDT
 
 Threshold Set   : {THRESHOLD} BDT
 
-Reading Time:
+Reading Time : {reading_time}
 
-{reading_time}
+Your balance is below the configured threshold.
 
 Please recharge your DESCO prepaid meter.
 
-This email was generated automatically by GitHub Actions.
+Regards,
+DESCO Balance Monitor
 """
 
         server = smtplib.SMTP(
@@ -121,27 +128,49 @@ This email was generated automatically by GitHub Actions.
 
         for receiver in TO_EMAILS:
 
-            msg = MIMEMultipart()
+            try:
 
-            msg["From"] = sender_email
+                msg = MIMEMultipart()
 
-            msg["To"] = receiver
+                msg["From"] = sender_email
 
-            msg["Subject"] = subject
+                msg["To"] = receiver
 
-            msg.attach(
-                MIMEText(body, "plain")
-            )
+                msg["Reply-To"] = sender_email
 
-            server.sendmail(
-                sender_email,
-                receiver,
-                msg.as_string()
-            )
+                msg["Subject"] = subject
 
-            print(
-                f"Alert sent to {receiver}"
-            )
+                msg["X-Mailer"] = (
+                    "DESCO Balance Monitor"
+                )
+
+                msg["X-Priority"] = "3"
+
+                msg.attach(
+                    MIMEText(
+                        body,
+                        "plain"
+                    )
+                )
+
+                server.sendmail(
+                    sender_email,
+                    receiver,
+                    msg.as_string()
+                )
+
+                print(
+                    f"Alert sent to {receiver}"
+                )
+
+            except Exception as e:
+
+                print(
+                    f"Failed to send "
+                    f"to {receiver}"
+                )
+
+                print(e)
 
         server.quit()
 
@@ -154,6 +183,9 @@ This email was generated automatically by GitHub Actions.
 
 except Exception as e:
 
-    print("ERROR:", e)
+    print(
+        "ERROR:",
+        e
+    )
 
     raise
