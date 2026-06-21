@@ -4,6 +4,12 @@ import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+import urllib3
+
+urllib3.disable_warnings(
+    urllib3.exceptions.InsecureRequestWarning
+)
+
 # =====================================================
 # DESCO SETTINGS
 # =====================================================
@@ -43,7 +49,10 @@ URL = (
 )
 
 try:
-    response = requests.get(URL, timeout=30)
+     response = requests.get(
+     URL,
+    timeout=30,
+    verify=False)
     response.raise_for_status()
 
     result = response.json()
