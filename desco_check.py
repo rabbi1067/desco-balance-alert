@@ -38,7 +38,9 @@ THRESHOLD = 380
 TO_EMAILS = [
     "fazlerabbii2000@gmail.com",
     "messi236167@gmail.com",
-    "fazlerabbicse65@gmail.com"
+    "fazlerabbicse65@gmail.com",
+    "abdullahalfaraby7@gmail.com"
+
 ]
 
 # =====================================================
