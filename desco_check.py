@@ -106,12 +106,12 @@ Threshold Set   : {THRESHOLD} BDT
 
 Reading Time : {reading_time}
 
-Your balance is below the configured threshold.
+Your DESCO prepaid meter balance has dropped below 100 BDT.
 
-Please recharge your DESCO prepaid meter.
+Please recharge your meter as soon as possible to avoid any unexpected power interruptions.
 
 Regards,
-DESCO Balance Monitor
+DESCO Balance Monitor created by Md Fazley Rabbi
 """
 
         server = smtplib.SMTP(
