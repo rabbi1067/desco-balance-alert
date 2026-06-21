@@ -29,7 +29,7 @@ METER_NO = "066120003770"
 # 200 = alert below 200 BDT
 # 50  = alert below 50 BDT
 
-THRESHOLD = 380
+THRESHOLD = 350
 
 # =====================================================
 # EMAIL RECEIVERS
