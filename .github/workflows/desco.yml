@@ -1,0 +1,40 @@
+name: DESCO Balance Alert
+
+on:
+
+  # ==================================================
+  # CHANGE ALERT CHECK TIME HERE
+  # ==================================================
+
+  # Every 6 hours
+  schedule:
+    - cron: '0 */6 * * *'
+
+  workflow_dispatch:
+
+jobs:
+
+  check-balance:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Requirements
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run DESCO Checker
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+        run: |
+          python desco_check.py
