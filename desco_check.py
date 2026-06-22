@@ -68,19 +68,19 @@ try:
         result["data"]["balance"]
     )
 
-reading_time_raw = result["data"]["readingTime"]
+    reading_time_raw = result["data"]["readingTime"]
 
-dt = datetime.strptime(
-    reading_time_raw,
-    "%Y-%m-%d %H:%M:%S"
-)
+    dt = datetime.strptime(
+        reading_time_raw,
+        "%Y-%m-%d %H:%M:%S"
+   )
 
-reading_time = dt.strftime(
-    "%d %b %Y, %I:%M:%S %p"
-)
+    reading_time = dt.strftime(
+        "%d %b %Y, %I:%M:%S %p"
+    )
 
-print(
-    f"Current Balance: {balance} BDT"
+   print(
+      f"Current Balance: {balance} BDT"
 )
 
     # =================================================
