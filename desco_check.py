@@ -2,6 +2,8 @@ import requests
 import smtplib
 import os
 
+from datetime import datetime
+
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -29,7 +31,7 @@ METER_NO = "066120003770"
 # 200 = alert below 200 BDT
 # 50  = alert below 50 BDT
 
-THRESHOLD = 100
+THRESHOLD = 400
 
 # =====================================================
 # EMAIL RECEIVERS
@@ -37,7 +39,6 @@ THRESHOLD = 100
 
 TO_EMAILS = [
     "fazlerabbii2000@gmail.com",
-    "fazlerabbicse65@gmail.com",
     "abdullahalfaraby7@gmail.com"
 
 ]
@@ -67,11 +68,20 @@ try:
         result["data"]["balance"]
     )
 
-    reading_time = result["data"]["readingTime"]
+reading_time_raw = result["data"]["readingTime"]
 
-    print(
-        f"Current Balance: {balance} BDT"
-    )
+dt = datetime.strptime(
+    reading_time_raw,
+    "%Y-%m-%d %H:%M:%S"
+)
+
+reading_time = dt.strftime(
+    "%d %b %Y, %I:%M:%S %p"
+)
+
+print(
+    f"Current Balance: {balance} BDT"
+)
 
     # =================================================
     # ALERT CONDITION
@@ -95,24 +105,25 @@ try:
         body = f"""
 Hello,
 
-This is an automatic DESCO prepaid balance notification.
+⚠️ This is an automated DESCO prepaid balance alert.
 
+DESCO Account Details
+────────────────────
 Account No : {ACCOUNT_NO}
+Meter No : {METER_NO}
 
-Meter No   : {METER_NO}
-
+Current Status
+────────────────────
 Current Balance : {balance} BDT
-
-Threshold Set   : {THRESHOLD} BDT
-
+Alert Threshold : {THRESHOLD} BDT
 Reading Time : {reading_time}
 
-Your DESCO prepaid meter balance has dropped below 100 BDT.
-
+Your DESCO prepaid meter balance has dropped below {THRESHOLD} BDT.
 Please recharge your meter as soon as possible to avoid any unexpected power interruptions.
 
 Regards,
-DESCO Balance Monitor created by Md Fazley Rabbi
+DESCO Balance Monitor
+Created by Md Fazley Rabbi
 """
 
         server = smtplib.SMTP(
