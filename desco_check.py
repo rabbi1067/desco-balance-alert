@@ -21,7 +21,7 @@ METER_NO = "066120003770"
 # ALERT SETTINGS
 # =====================================================
 
-THRESHOLD = 400
+THRESHOLD = 100
 
 # =====================================================
 # EMAIL RECEIVERS
@@ -97,7 +97,7 @@ Current Status
 ────────────────────
 Current Balance : {balance} BDT
 Alert Threshold : {THRESHOLD} BDT
-Reading Time : {reading_time}
+DESCO Reading Time : {reading_time}
 
 Your DESCO prepaid meter balance has dropped below {THRESHOLD} BDT.
 Please recharge your meter as soon as possible to avoid any unexpected power interruptions.
