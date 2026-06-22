@@ -1,12 +1,9 @@
 import requests
 import smtplib
 import os
-
 from datetime import datetime
-
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
 import urllib3
 
 urllib3.disable_warnings(
@@ -24,13 +21,6 @@ METER_NO = "066120003770"
 # ALERT SETTINGS
 # =====================================================
 
-# Change threshold here
-#
-# Example:
-# 100 = alert below 100 BDT
-# 200 = alert below 200 BDT
-# 50  = alert below 50 BDT
-
 THRESHOLD = 400
 
 # =====================================================
@@ -40,7 +30,6 @@ THRESHOLD = 400
 TO_EMAILS = [
     "fazlerabbii2000@gmail.com",
     "abdullahalfaraby7@gmail.com"
-
 ]
 
 # =====================================================
@@ -53,7 +42,6 @@ URL = (
 )
 
 try:
-
     response = requests.get(
         URL,
         timeout=30,
@@ -64,24 +52,20 @@ try:
 
     result = response.json()
 
-    balance = float(
-        result["data"]["balance"]
-    )
+    balance = float(result["data"]["balance"])
 
     reading_time_raw = result["data"]["readingTime"]
 
     dt = datetime.strptime(
         reading_time_raw,
         "%Y-%m-%d %H:%M:%S"
-   )
+    )
 
     reading_time = dt.strftime(
         "%d %b %Y, %I:%M:%S %p"
     )
 
-   print(
-      f"Current Balance: {balance} BDT"
-        )
+    print(f"Current Balance: {balance} BDT")
 
     # =================================================
     # ALERT CONDITION
@@ -89,12 +73,9 @@ try:
 
     if balance <= THRESHOLD:
 
-        print(
-            "Low balance detected. Sending email..."
-        )
+        print("Low balance detected. Sending email...")
 
         sender_email = os.environ["EMAIL_USER"]
-
         sender_password = os.environ["EMAIL_PASS"]
 
         subject = (
@@ -141,28 +122,17 @@ Created by Md Fazley Rabbi
         for receiver in TO_EMAILS:
 
             try:
-
                 msg = MIMEMultipart()
 
                 msg["From"] = sender_email
-
                 msg["To"] = receiver
-
                 msg["Reply-To"] = sender_email
-
                 msg["Subject"] = subject
-
-                msg["X-Mailer"] = (
-                    "DESCO Balance Monitor"
-                )
-
+                msg["X-Mailer"] = "DESCO Balance Monitor"
                 msg["X-Priority"] = "3"
 
                 msg.attach(
-                    MIMEText(
-                        body,
-                        "plain"
-                    )
+                    MIMEText(body, "plain")
                 )
 
                 server.sendmail(
@@ -171,33 +141,20 @@ Created by Md Fazley Rabbi
                     msg.as_string()
                 )
 
-                print(
-                    f"Alert sent to {receiver}"
-                )
+                print(f"Alert sent to {receiver}")
 
             except Exception as e:
-
-                print(
-                    f"Failed to send "
-                    f"to {receiver}"
-                )
-
+                print(f"Failed to send to {receiver}")
                 print(e)
 
         server.quit()
 
     else:
-
         print(
             f"Balance OK "
             f"({balance} BDT > {THRESHOLD} BDT)"
         )
 
 except Exception as e:
-
-    print(
-        "ERROR:",
-        e
-    )
-
+    print("ERROR:", e)
     raise
