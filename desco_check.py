@@ -1,9 +1,12 @@
 import requests
 import smtplib
 import os
+
 from datetime import datetime
+
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
 import urllib3
 
 urllib3.disable_warnings(
@@ -42,6 +45,7 @@ URL = (
 )
 
 try:
+
     response = requests.get(
         URL,
         timeout=30,
@@ -52,7 +56,9 @@ try:
 
     result = response.json()
 
-    balance = float(result["data"]["balance"])
+    balance = float(
+        result["data"]["balance"]
+    )
 
     reading_time_raw = result["data"]["readingTime"]
 
@@ -65,7 +71,22 @@ try:
         "%d %b %Y, %I:%M:%S %p"
     )
 
-    print(f"Current Balance: {balance} BDT")
+    # Current script run time
+    current_time = datetime.now().strftime(
+        "%d %b %Y, %I:%M:%S %p"
+    )
+
+    print(
+        f"Current Balance: {balance} BDT"
+    )
+
+    print(
+        f"DESCO Reading Time: {reading_time}"
+    )
+
+    print(
+        f"Current Time: {current_time}"
+    )
 
     # =================================================
     # ALERT CONDITION
@@ -73,9 +94,12 @@ try:
 
     if balance <= THRESHOLD:
 
-        print("Low balance detected. Sending email...")
+        print(
+            "Low balance detected. Sending email..."
+        )
 
         sender_email = os.environ["EMAIL_USER"]
+
         sender_password = os.environ["EMAIL_PASS"]
 
         subject = (
@@ -97,7 +121,8 @@ Current Status
 ────────────────────
 Current Balance : {balance} BDT
 Alert Threshold : {THRESHOLD} BDT
-Reading Time : {reading_time}
+DESCO Reading Time : {reading_time}
+Alert Generated At : {current_time}
 
 Your DESCO prepaid meter balance has dropped below {THRESHOLD} BDT.
 Please recharge your meter as soon as possible to avoid any unexpected power interruptions.
@@ -122,17 +147,23 @@ Created by Md Fazley Rabbi
         for receiver in TO_EMAILS:
 
             try:
+
                 msg = MIMEMultipart()
 
                 msg["From"] = sender_email
                 msg["To"] = receiver
                 msg["Reply-To"] = sender_email
                 msg["Subject"] = subject
-                msg["X-Mailer"] = "DESCO Balance Monitor"
+                msg["X-Mailer"] = (
+                    "DESCO Balance Monitor"
+                )
                 msg["X-Priority"] = "3"
 
                 msg.attach(
-                    MIMEText(body, "plain")
+                    MIMEText(
+                        body,
+                        "plain"
+                    )
                 )
 
                 server.sendmail(
@@ -141,20 +172,32 @@ Created by Md Fazley Rabbi
                     msg.as_string()
                 )
 
-                print(f"Alert sent to {receiver}")
+                print(
+                    f"Alert sent to {receiver}"
+                )
 
             except Exception as e:
-                print(f"Failed to send to {receiver}")
+
+                print(
+                    f"Failed to send to {receiver}"
+                )
+
                 print(e)
 
         server.quit()
 
     else:
+
         print(
             f"Balance OK "
             f"({balance} BDT > {THRESHOLD} BDT)"
         )
 
 except Exception as e:
-    print("ERROR:", e)
+
+    print(
+        "ERROR:",
+        e
+    )
+
     raise
